@@ -12,7 +12,7 @@
 ## .. code-block:: nimrod
 ##
 ##    # Open a file for reading, read and print one line, then read and store the next ten bytes.
-##    var f : PPythonFile = open("my_file.txt", "r")      # f = open("my_file.txt", "r")
+##    var f : PythonFile = open("my_file.txt", "r")       # f = open("my_file.txt", "r")
 ##    echo(f.readline())                                  # print(f.readline())
 ##    var s : string = f.read(10)                         # s = f.read(10)
 ##    f.close()                                           # f.close()
@@ -20,7 +20,7 @@
 ## .. code-block:: nimrod
 ##
 ##    # Open a file for writing, write "Hello World!", then write multiple lines at once.
-##    var f : PPythonFile = open("my_file.txt", "w")      # f = open("my_file.txt", "w")
+##    var f : PythonFile = open("my_file.txt", "w")       # f = open("my_file.txt", "w")
 ##    f.write("Hello World!")                             # f.write("Hello World!")
 ##    f.writelines(["This", "is", "an", "example"])       # f.writelines(["This", "is", "an", "example"])
 ##    f.close()                                           # f.close()
@@ -29,7 +29,7 @@
 ##
 ##    # Open a file for reading or writing, then read and write from multiple locations
 ##    # using seek() and tell().
-##    var f : PPythonFile = open("my_file.txt", "r+")     # f = open("my_file.txt", "r+")
+##    var f : PythonFile = open("my_file.txt", "r+")      # f = open("my_file.txt", "r+")
 ##    f.seek(10)                                          # f.seek(10)
 ##    echo(f.read())                                      # print(f.read())
 ##    echo(f.tell())                                      # print(f.tell())
@@ -50,39 +50,41 @@
 import strutils
 
 
-type TPythonFile* = object
-    f : TFile
-    mode : string
-    closed : bool
-    name : string
-    softspace : bool
-    encoding : string
-    newlines : string
 
-type PPythonFile* = ref TPythonFile
+type
+    PythonFile* = ref PythonFileInternal
+    
+    PythonFileInternal* = object
+        f* : TFile
+        mode* : string
+        closed* : bool
+        name* : string
+        softspace* : bool
+        encoding* : string
+        newlines* : string
 
 
-proc open*(filename : string, mode : string = "r", buffering : int = -1): PPythonFile = 
+proc open*(filename : string, mode : string = "r", buffering : int = -1): PythonFile = 
     ## Opens the specified file.
     ##
-    ## mode can be either "r" (reading), "w" (writing), "a" (appending), "r+" (read/write, only existing files), and "w+" (read/write,
-    ## file created if needed).
+    ## mode can be either ``r`` (reading), ``w`` (writing), ``a`` (appending), ``r+`` (read/write, only existing files), and ``w+``
+    ## (read/write, file created if needed).
     ##
-    ## buffering specifies the file’s desired buffer size: 0 means unbuffered, 1 means line buffered, any other positive value means
-    ## use a buffer of (approximately) that size (in bytes). A negative buffering means to use the system default, which is usually line buffered for tty devices
-    ## and fully buffered for other files.
+    ## ``buffering`` specifies the file’s desired buffer size: 0 means unbuffered, 1 means line buffered, any other positive value means
+    ## use a buffer of (approximately) that size (in bytes). A negative buffering means to use the system default, which is usually
+    ## line buffered for tty devices and fully buffered for other files.
     
-    var f : PPythonFile = PPythonFile(f: nil, mode: "w", closed: false, softspace: false, encoding: nil, newlines : nil)
+    var f : PythonFile = PythonFile(f: nil, mode: "w", closed: false, softspace: false, encoding: nil, newlines : nil)
     var m : TFileMode = fmRead
-    if mode == "r":
+    if mode == "r" or mode == "rb":
         m = fmRead
-    elif mode == "w":
+    elif mode == "w" or mode == "wb":
         m = fmWrite
-    elif mode == "a":
+    elif mode == "a" or mode == "ab":
         m = fmAppend
-    elif mode == "r+":
+    elif mode == "r+" or mode == "rb+":
         m = fmReadWriteExisting
-    elif mode == "w+":
+    elif mode == "w+" or mode == "wb+":
         m = fmReadWrite
     f.f = open(filename, m, buffering)
     f.mode = mode
@@ -90,62 +92,62 @@ proc open*(filename : string, mode : string = "r", buffering : int = -1): PPytho
     return f
 
 
-proc close*(file : PPythonFile) {.noreturn.} = 
+proc close*(file : PythonFile) {.noreturn.} = 
     ## Closes the file.
       
     file.f.close()
     file.closed = true
 
 
-proc write*(file : PPythonFile, s : string) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : string) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc write*(file : PPythonFile, s : float32) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : float32) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc write*(file : PPythonFile, s : int) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : int) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc write*(file : PPythonFile, s : BiggestInt) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : BiggestInt) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc write*(file : PPythonFile, s : BiggestFloat) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : BiggestFloat) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc write*(file : PPythonFile, s : bool) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : bool) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc write*(file : PPythonFile, s : char) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : char) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc write*(file : PPythonFile, s : cstring) {.noreturn.} = 
-    ## Writes s to the file.
+proc write*(file : PythonFile, s : cstring) {.noreturn.} = 
+    ## Writes ``s`` to the file.
     
     file.f.write(s)
 
 
-proc read*(file : PPythonFile): string = 
+proc read*(file : PythonFile): string = 
     ## Reads all of the contents of the file.
     
     var i = int(file.f.getFilePos())
@@ -154,7 +156,7 @@ proc read*(file : PPythonFile): string =
     return s.substr(i)
 
 
-proc read*(file : PPythonFile, count : int): string = 
+proc read*(file : PythonFile, count : int): string = 
     ## Reads the specified number of bytes from the file.
     
     var s = newSeq[char](count)
@@ -165,7 +167,7 @@ proc read*(file : PPythonFile, count : int): string =
     return r
 
 
-proc readline*(file : PPythonFile): string = 
+proc readline*(file : PythonFile): string = 
     ## Reads a line from the file.
     
     var s : string = file.f.readLine()
@@ -175,7 +177,7 @@ proc readline*(file : PPythonFile): string =
         return s & "\n"
 
 
-proc readline*(file : PPythonFile, count : int): string = 
+proc readline*(file : PythonFile, count : int): string = 
     ## Reads a line from the file, up to a maximum of the specified number of bytes.
     
     var s : string = file.readLine()
@@ -185,7 +187,7 @@ proc readline*(file : PPythonFile, count : int): string =
         return s.substr(0, count)
 
 
-proc readlines*(file : PPythonFile): seq[string] = 
+proc readlines*(file : PythonFile): seq[string] = 
     ## Reads all of the lines from the file.
     
     file.f.setFilePos(0)
@@ -199,7 +201,7 @@ proc readlines*(file : PPythonFile): seq[string] =
     return s
 
 
-proc readlines*(file : PPythonFile, count : int): seq[string] = 
+proc readlines*(file : PythonFile, count : int): seq[string] = 
     ## Reads all of the lines from the file, up to a maximum of the specified number of bytes.
     
     file.f.setFilePos(0)
@@ -224,34 +226,34 @@ proc readlines*(file : PPythonFile, count : int): seq[string] =
     return s
 
 
-proc flush*(file : PPythonFile) {.noreturn.} = 
+proc flush*(file : PythonFile) {.noreturn.} = 
     ## Flushes the file's internal buffer.
     
     file.f.flushFile()
 
 
-proc fileno*(file : PPythonFile): TFileHandle = 
+proc fileno*(file : PythonFile): TFileHandle = 
     ## Returns the underlying file handle. Note that due to implementation details this is NOT the same in Nimrod as it
     ## is in Python and CANNOT be used the same way!
     
     return file.f.fileHandle()
 
 
-proc tell*(file : PPythonFile): int = 
+proc tell*(file : PythonFile): int = 
     ## Returns the file's current position.
     
     return int(file.f.getFilePos())
 
 
-proc seek*(file : PPythonFile, offset : int) {.noreturn.} = 
+proc seek*(file : PythonFile, offset : int) {.noreturn.} = 
     ## Sets the file's current position to the specified value.
     
     file.f.setFilePos(offset)
         
 
-proc seek*(file : PPythonFile, offset : int, whence : int) {.noreturn.} = 
-    ## Sets the file's current position to the specified value. whence can be either 0 (absolute positioning), 1 (seek relative to current position),
-    ## or 2 (seek relative to file's end.
+proc seek*(file : PythonFile, offset : int, whence : int) {.noreturn.} = 
+    ## Sets the file's current position to the specified value. ``whence`` can be either 0 (absolute positioning),
+    ## 1 (seek relative to current position), or 2 (seek relative to file's end).
     
     if whence == 1:
         file.seek(file.tell() + offset)
@@ -261,15 +263,15 @@ proc seek*(file : PPythonFile, offset : int, whence : int) {.noreturn.} =
         file.seek(offset)
 
 
-proc writelines*(file : PPythonFile, lines : openarray[string]) {.noreturn.} = 
+proc writelines*(file : PythonFile, lines : openarray[string]) {.noreturn.} = 
     ## Writes the lines to the file.
     
     for i in lines:
         file.write(i)
 
 
-proc isatty*(file : PPythonFile): bool = 
-    ## Returns false. In Python, this returns whether the file is connected to a tty(-like) device. However, there is no
-    ## comparable proc in Nimrod.
+proc isatty*(file : PythonFile): bool = 
+    ## Returns ``false``. In Python, this returns whether the file is connected to a tty(-like) device. However,
+    ## there is no comparable proc in Nimrod.
     
     return false
