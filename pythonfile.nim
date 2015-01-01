@@ -50,12 +50,11 @@
 import strutils
 
 
-
 type
     PythonFile* = ref PythonFileInternal
     
     PythonFileInternal* = object
-        f* : TFile
+        f* : File
         mode* : string
         closed* : bool
         name* : string
@@ -75,7 +74,7 @@ proc open*(filename : string, mode : string = "r", buffering : int = -1): Python
     ## line buffered for tty devices and fully buffered for other files.
     
     var f : PythonFile = PythonFile(f: nil, mode: "w", closed: false, softspace: false, encoding: nil, newlines : nil)
-    var m : TFileMode = fmRead
+    var m : FileMode = fmRead
     if mode == "r" or mode == "rb":
         m = fmRead
     elif mode == "w" or mode == "wb":
@@ -232,11 +231,11 @@ proc flush*(file : PythonFile) {.noreturn.} =
     file.f.flushFile()
 
 
-proc fileno*(file : PythonFile): TFileHandle = 
+proc fileno*(file : PythonFile): FileHandle = 
     ## Returns the underlying file handle. Note that due to implementation details this is NOT the same in Nimrod as it
     ## is in Python and CANNOT be used the same way!
     
-    return file.f.fileHandle()
+    return file.f.getfileHandle()
 
 
 proc tell*(file : PythonFile): int = 
