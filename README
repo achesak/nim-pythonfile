@@ -1,9 +1,9 @@
 ---- About ----
 
-nimrod-pythonfile is a Nimrod module to wrap the file functions and provide an interface as similar as possible to that of Python. 
+nim-pythonfile is a Nim module to wrap the file functions and provide an interface as similar as possible to that of Python. 
 
 See the documentation.html file for usage and more info.
 
 ---- License ----
 
-nimrod-pythonfile is released under the MIT open source license.
+nim-pythonfile is released under the MIT open source license.

@@ -1,11 +1,11 @@
-# Nimrod module to wrap the file functions and provide an interface
+# Nim module to wrap the file functions and provide an interface
 # as similar as possible to that of Python.
 
 # Written by Adam Chesak.
 # Released under the MIT open source license.
 
 
-## pythonfile is a Nimrod module to wrap the file functions and provide an interface as similar as possible to that of Python.
+## pythonfile is a Nim module to wrap the file functions and provide an interface as similar as possible to that of Python.
 ##
 ## Examples:
 ## 
@@ -38,8 +38,8 @@
 ##    f.write("Inserted at pos 50 from end")              # f.write("Inserted at pos 50 from end")
 ##    f.close()                                           # f.close()
 ##
-## Note that due to some inherent differences between how Nimrod and Python handle files, a complete
-## 1 to 1 wrapper is not possible. Notably, Nimrod has no equivalent to the ``newlines`` and ``encoding``
+## Note that due to some inherent differences between how Nim and Python handle files, a complete
+## 1 to 1 wrapper is not possible. Notably, Nim has no equivalent to the ``newlines`` and ``encoding``
 ## properties, and while they are present in this implementation they are always set to ``nil``. In
 ## addition, the ``fileno()`` procedure functions differently from how it does in Python, yet it has the
 ## same basic functionality. Finally, the ``itatty()`` procedure will always return ``false``.
