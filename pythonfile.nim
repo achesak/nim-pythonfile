@@ -34,7 +34,7 @@
 ##    echo(f.read())                                      # print(f.read())
 ##    echo(f.tell())                                      # print(f.tell())
 ##    f.seek(0)                                           # f.seek(0)
-##    f.seek(50, 2)                                       # f.seek(50, 2)
+##    f.seek(-50, 2)                                      # f.seek(-50, 2)
 ##    f.write("Inserted at pos 50 from end")              # f.write("Inserted at pos 50 from end")
 ##    f.close()                                           # f.close()
 ##
@@ -257,7 +257,7 @@ proc seek*(file : PythonFile, offset : int, whence : int) {.noreturn.} =
     if whence == 1:
         file.seek(file.tell() + offset)
     elif whence == 2:
-        file.seek(int(file.f.getFileSize()) - offset)
+        file.seek(int(file.f.getFileSize()) + offset)
     elif whence == 0:
         file.seek(offset)
 
