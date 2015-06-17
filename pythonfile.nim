@@ -211,8 +211,8 @@ proc readlines*(file : PythonFile, count : int): seq[string] =
     for i in 0..countlines(a):
         if file.f.endOfFile():
             break
-        c += count
         var n : string = file.readLine()
+        c += len(n)
         if c < count:
             s[i] = n
         elif c > count:
