@@ -98,6 +98,30 @@ proc close*(file : PythonFile) {.noreturn.} =
     file.closed = true
 
 
+proc tell*(file : PythonFile): int = 
+    ## Returns the file's current position.
+    
+    return int(file.f.getFilePos())
+
+
+proc seek*(file : PythonFile, offset : int) {.noreturn.} = 
+    ## Sets the file's current position to the specified value.
+    
+    file.f.setFilePos(offset)
+        
+
+proc seek*(file : PythonFile, offset : int, whence : int) {.noreturn.} = 
+    ## Sets the file's current position to the specified value. ``whence`` can be either 0 (absolute positioning),
+    ## 1 (seek relative to current position), or 2 (seek relative to file's end).
+    
+    if whence == 1:
+        file.seek(file.tell() + offset)
+    elif whence == 2:
+        file.seek(int(file.f.getFileSize()) + offset)
+    elif whence == 0:
+        file.seek(offset)
+
+
 proc write*(file : PythonFile, s : string) {.noreturn.} = 
     ## Writes ``s`` to the file.
     
@@ -183,6 +207,7 @@ proc readline*(file : PythonFile, count : int): string =
     if len(s) <= count:
         return s
     else:
+        file.seek(-1 * (len(s) - count), 1)
         return s.substr(0, count)
 
 
@@ -218,6 +243,7 @@ proc readlines*(file : PythonFile, count : int): seq[string] =
         elif c > count:
             var diff : int = len(n) - (c - count)
             s[i] = n.substr(0, diff)
+            file.seek(-1 * (c - count), 1)
             break
         else:
             s[i] = n
@@ -236,30 +262,6 @@ proc fileno*(file : PythonFile): FileHandle =
     ## is in Python and CANNOT be used the same way!
     
     return file.f.getfileHandle()
-
-
-proc tell*(file : PythonFile): int = 
-    ## Returns the file's current position.
-    
-    return int(file.f.getFilePos())
-
-
-proc seek*(file : PythonFile, offset : int) {.noreturn.} = 
-    ## Sets the file's current position to the specified value.
-    
-    file.f.setFilePos(offset)
-        
-
-proc seek*(file : PythonFile, offset : int, whence : int) {.noreturn.} = 
-    ## Sets the file's current position to the specified value. ``whence`` can be either 0 (absolute positioning),
-    ## 1 (seek relative to current position), or 2 (seek relative to file's end).
-    
-    if whence == 1:
-        file.seek(file.tell() + offset)
-    elif whence == 2:
-        file.seek(int(file.f.getFileSize()) + offset)
-    elif whence == 0:
-        file.seek(offset)
 
 
 proc writelines*(file : PythonFile, lines : openarray[string]) {.noreturn.} = 
