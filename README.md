@@ -37,8 +37,6 @@ same basic functionality. Finally, the `itatty()` procedure will always return `
 
 For general use, however, this wrapper provides all of the common Python file methods.
 
-See the documentation.html file for usage and more info.
-
 License
 =======
 
