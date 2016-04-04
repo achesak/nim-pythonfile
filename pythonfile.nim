@@ -61,6 +61,7 @@ type
         softspace* : bool
         encoding* : string
         newlines* : string
+        filename* : string
 
 
 proc open*(filename : string, mode : string = "r", buffering : int = -1): PythonFile = 
@@ -73,7 +74,7 @@ proc open*(filename : string, mode : string = "r", buffering : int = -1): Python
     ## use a buffer of (approximately) that size (in bytes). A negative buffering means to use the system default, which is usually
     ## line buffered for tty devices and fully buffered for other files.
     
-    var f : PythonFile = PythonFile(f: nil, mode: "w", closed: false, softspace: false, encoding: nil, newlines : nil)
+    var f : PythonFile = PythonFile(f: nil, mode: mode, closed: false, softspace: false, encoding: nil, newlines : nil, filename: filename)
     var m : FileMode = fmRead
     if mode == "r" or mode == "rb":
         m = fmRead
@@ -86,8 +87,6 @@ proc open*(filename : string, mode : string = "r", buffering : int = -1): Python
     elif mode == "w+" or mode == "wb+":
         m = fmReadWrite
     f.f = open(filename, m, buffering)
-    f.mode = mode
-    f.name = filename
     return f
 
 
