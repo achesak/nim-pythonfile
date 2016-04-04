@@ -1,6 +1,6 @@
 [Package]
 name = "pythonfile"
-version = "0.1"
+version = "1.0"
 author = "Adam Chesak"
 description = "Wrapper of the file functions to provide an interface as similar as possible to that of Python"
 license = "MIT"
