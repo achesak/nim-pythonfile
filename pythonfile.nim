@@ -257,7 +257,7 @@ proc flush*(file : PythonFile) {.noreturn.} =
 
 
 proc fileno*(file : PythonFile): FileHandle = 
-    ## Returns the underlying file handle. Note that due to implementation details this is NOT the same in Nimrod as it
+    ## Returns the underlying file handle. Note that due to implementation details this is NOT the same in Nim as it
     ## is in Python and CANNOT be used the same way!
     
     return file.f.getfileHandle()
