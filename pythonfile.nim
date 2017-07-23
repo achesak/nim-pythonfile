@@ -73,17 +73,20 @@ proc open*(filename : string, mode : string = "r", buffering : int = -1): Python
     ## line buffered for tty devices and fully buffered for other files.
     
     var f : PythonFile = PythonFile(f: nil, mode: mode, closed: false, softspace: false, encoding: nil, newlines : nil, filename: filename)
-    var m : FileMode = fmRead
-    if mode == "r" or mode == "rb":
-        m = fmRead
-    elif mode == "w" or mode == "wb":
-        m = fmWrite
-    elif mode == "a" or mode == "ab":
-        m = fmAppend
-    elif mode == "r+" or mode == "rb+":
-        m = fmReadWriteExisting
-    elif mode == "w+" or mode == "wb+":
-        m = fmReadWrite
+    var m : FileMode
+    case mode:
+        of "r", "rb":
+            m = fmRead
+        of "w", "wb":
+            m = fmWrite
+        of "a", "ab":
+            m = fmAppend
+        of "r+", "rb+":
+            m = fmReadWriteExisting
+        of "w+", "wb+":
+            m = fmReadWrite
+        else:
+            m = fmRead
     f.f = open(filename, m, buffering)
     return f
 
@@ -111,12 +114,15 @@ proc seek*(file : PythonFile, offset : int, whence : int) {.noreturn.} =
     ## Sets the file's current position to the specified value. ``whence`` can be either 0 (absolute positioning),
     ## 1 (seek relative to current position), or 2 (seek relative to file's end).
     
-    if whence == 1:
-        file.seek(file.tell() + offset)
-    elif whence == 2:
-        file.seek(int(file.f.getFileSize()) + offset)
-    elif whence == 0:
-        file.seek(offset)
+    case whence:
+        of 0:
+            file.seek(offset)
+        of 1:
+            file.seek(file.tell() + offset)
+        of 2:
+            file.seek(int(file.f.getFileSize()) + offset)
+        else:
+            file.seek(offset)
 
 
 proc write*(file : PythonFile, s : string) {.noreturn.} = 
