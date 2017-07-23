@@ -51,9 +51,7 @@ import strutils
 
 
 type
-    PythonFile* = ref PythonFileInternal
-    
-    PythonFileInternal* = object
+    PythonFile* = ref object
         f* : File
         mode* : string
         closed* : bool
