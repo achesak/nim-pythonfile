@@ -271,7 +271,7 @@ proc writelines*(file: PythonFile, lines: openarray[string]): void =
 
 
 proc isatty*(file: PythonFile): bool =
-    ## Returns true if the opened file is a tty device, else return false
+    ## Returns true if the opened file is a tty device, else returns false
 
     when defined(unix):
         proc isattyUnix(desc: cint): cint {.importc: "isatty", header: "unistd.h".}
