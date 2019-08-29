@@ -72,7 +72,7 @@ proc open*(filename: string, mode: string = "r", buffering: int = -1): PythonFil
     ## use a buffer of (approximately) that size (in bytes). A negative buffering means to use the system default, which is usually
     ## line buffered for tty devices and fully buffered for other files.
     
-    var f: PythonFile = PythonFile(f: nil, mode: mode, closed: false, softspace: false, encoding: nil, newlines: nil, filename: filename)
+    var f: PythonFile = PythonFile(f: nil, mode: mode, closed: false, softspace: false, encoding: "", newlines: "", filename: filename)
     var m: FileMode
     case mode:
         of "r", "rb":
@@ -270,8 +270,14 @@ proc writelines*(file: PythonFile, lines: openarray[string]): void =
         file.write(line)
 
 
+proc isattyUnix(desc: cint): cint {.importc: "isatty", varargs, header: "unistd.h".}
+    ## used by isatty() on unix like system
+
+
 proc isatty*(file: PythonFile): bool = 
-    ## Returns ``false``. In Python, this returns whether the file is connected to a tty(-like) device. However,
-    ## there is no comparable proc in Nimrod.
+    ## TODO: add support for windows
     
+    if defined(unix) and isattyUnix(file.fileno()) == 1:
+        return true
+
     return false
