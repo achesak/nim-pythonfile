@@ -33,7 +33,7 @@ Note that due to some inherent differences between how Nim and Python handle fil
 1 to 1 wrapper is not possible. Notably, Nim has no equivalent to the `newlines` and `encoding`
 properties, and while they are present in this implementation they are always set to `nil`. In
 addition, the `fileno()` procedure functions differently from how it does in Python, yet it has the
-same basic functionality. Finally, the `itatty()` procedure will always return `false`.
+same basic functionality. Finally, the `itatty()` procedure works well on unix like system, but it will always return `false` on windows.
 
 For general use, however, this wrapper provides all of the common Python file methods.
 
