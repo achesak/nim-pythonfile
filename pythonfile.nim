@@ -270,14 +270,14 @@ proc writelines*(file: PythonFile, lines: openarray[string]): void =
         file.write(line)
 
 
-proc isattyUnix(desc: cint): cint {.importc: "isatty", varargs, header: "unistd.h".}
-    ## used by isatty() on unix like system
+proc isatty*(file: PythonFile): bool =
+    ## Returns true if the opened file is a tty device, else return false
 
-
-proc isatty*(file: PythonFile): bool = 
-    ## TODO: add support for windows
-    
-    if defined(unix) and isattyUnix(file.fileno()) == 1:
-        return true
-
-    return false
+    when defined(unix):
+        proc isattyUnix(desc: cint): cint {.importc: "isatty", header: "unistd.h".}
+        return isattyUnix(file.fileno()) == 1
+    elif defined(windows):
+        proc isattyWin(desc: cint): cint {.importc: "_isatty", header: "io.h".}
+        return isattyWin(file.fileno()) != 0
+    else:
+        return false
