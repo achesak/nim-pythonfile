@@ -47,7 +47,7 @@
 ## For general use, however, this wrapper provides all of the common Python file methods.
 
 
-import strutils
+import strutils, terminal
 
 
 type
@@ -273,11 +273,4 @@ proc writelines*(file: PythonFile, lines: openarray[string]): void =
 proc isatty*(file: PythonFile): bool =
     ## Returns true if the opened file is a tty device, else returns false
 
-    when defined(unix):
-        proc isattyUnix(desc: cint): cint {.importc: "isatty", header: "unistd.h".}
-        return isattyUnix(file.fileno()) == 1
-    elif defined(windows):
-        proc isattyWin(desc: cint): cint {.importc: "_isatty", header: "io.h".}
-        return isattyWin(file.fileno()) != 0
-    else:
-        return false
+    return file.f.isatty()
