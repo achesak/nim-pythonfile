@@ -47,7 +47,7 @@
 ## For general use, however, this wrapper provides all of the common Python file methods.
 
 
-import strutils, terminal
+import macros, strutils, terminal
 
 
 type
@@ -61,6 +61,36 @@ type
         newlines*: string
         filename*: string
 
+macro with*(args: untyped, body: untyped): untyped =
+    ### A with macro.
+
+    args.expectKind nnkInfix
+    args.expectLen 3
+
+    # basic stmt
+    var stmt = newStmtList()
+    stmt.add newTree(nnkVarSection,
+        newIdentDefs(
+            args[2],
+            newEmptyNode(),
+            args[1]
+        )
+    )
+
+    for i in body: stmt.add i
+    stmt.add newTree(nnkCall,
+        newDotExpr(
+            args[2],
+            newIdentNode("close")
+        )
+    )
+
+    # add basic stmt to block stmt, for better exception catch
+    result = newStmtList()
+    result.add newTree(nnkBlockStmt,
+        newEmptyNode(),
+        stmt
+    )
 
 proc open*(filename: string, mode: string = "r", buffering: int = -1): PythonFile = 
     ## Opens the specified file.
@@ -274,3 +304,14 @@ proc isatty*(file: PythonFile): bool =
     ## Returns true if the opened file is a tty device, else returns false
 
     return file.f.isatty()
+
+
+when isMainModule:
+    ## test code
+    with open("temp.txt", "w+") as f:
+        f.write("test")
+        f.seek(0, 0)
+        echo(f.read())
+
+    import os
+    os.removeFile("temp.txt")
