@@ -28,6 +28,11 @@ Examples:
     f.write("Inserted at pos 50 from end")              # f.write("Inserted at pos 50 from end")
     f.close()                                           # f.close()
     
+    # Basic with/as grammer for file operation
+    with open("temp.txt", "w+") as f:
+        f.write("test")
+        f.seek(0, 0)
+        echo(f.read())
 
 Note that due to some inherent differences between how Nim and Python handle files, a complete
 1 to 1 wrapper is not possible. Notably, Nim has no equivalent to the `newlines` and `encoding`
