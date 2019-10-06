@@ -49,6 +49,9 @@
 
 import macros, strutils, terminal
 
+when defined(Unix):
+    import posix
+
 
 type
     PythonFile* = ref object
@@ -305,6 +308,15 @@ proc isatty*(file: PythonFile): bool =
 
     return file.f.isatty()
 
+proc truncate*(file: PythonFile, length: int): int =
+    ## Truncate the file to a specify size, returns 0 if successed, else returns -1.
+    ## TODO: add support for windows platform.
+
+    when defined(Unix):
+        result = ftruncate(file.f.getFileHandle(), length)
+        if result == 0: file.seek(0, 0)
+    elif defined(Windows):
+        result = 0
 
 when isMainModule:
     ## test code
